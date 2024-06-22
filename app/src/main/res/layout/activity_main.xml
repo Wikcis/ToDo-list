@@ -7,13 +7,105 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/endHelper"
+        app:layout_constraintStart_toStartOf="@id/startHelper"
+        app:layout_constraintTop_toBottomOf="@id/categoriesHelper" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/searchBarHelper"
+        app:layout_constraintEnd_toStartOf="@id/settingsButtonHelper"
+        app:layout_constraintStart_toStartOf="@id/startHelper"
+        app:layout_constraintTop_toBottomOf="@id/topHelper" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:src="@drawable/settings"
+        app:layout_constraintBottom_toTopOf="@id/searchBarHelper"
+        app:layout_constraintEnd_toEndOf="@id/endHelper"
+        app:layout_constraintStart_toStartOf="@id/settingsButtonHelper"
+        app:layout_constraintTop_toBottomOf="@id/topHelper" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTaskButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:backgroundTint="@color/button"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/bottomHelper"
+        app:layout_constraintEnd_toEndOf="@id/endHelper"
+        app:layout_constraintStart_toStartOf="@id/settingsButtonHelper"
+        app:layout_constraintTop_toTopOf="@id/addTaskButtonHelper"
+        app:srcCompat="@drawable/add" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/addTaskButtonHelper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.80" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/searchBarHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.12" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/settingsButtonHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.02" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/categoriesHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
