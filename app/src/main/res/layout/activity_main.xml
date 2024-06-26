@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Activities.MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@id/topHelper" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/settingsButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="10dp"
@@ -36,6 +36,17 @@
         app:layout_constraintStart_toStartOf="@id/settingsButtonHelper"
         app:layout_constraintTop_toBottomOf="@id/topHelper" />
 
+    <ImageView
+        android:id="@+id/sortButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        android:src="@drawable/sort"
+        app:layout_constraintBottom_toTopOf="@id/categoriesHelper"
+        app:layout_constraintEnd_toEndOf="@id/endHelper"
+        app:layout_constraintStart_toStartOf="@id/settingsButtonHelper"
+        app:layout_constraintTop_toBottomOf="@id/searchBarHelper" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addTaskButton"
         android:layout_width="0dp"
@@ -44,7 +55,7 @@
         android:clickable="true"
         android:focusable="true"
         android:tint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/bottomHelper"
+        app:layout_constraintBottom_toBottomOf="@id/descriptionHelper"
         app:layout_constraintEnd_toEndOf="@id/endHelper"
         app:layout_constraintStart_toStartOf="@id/settingsButtonHelper"
         app:layout_constraintTop_toTopOf="@id/addTaskButtonHelper"
@@ -59,7 +70,7 @@
         app:layout_constraintGuide_percent="0.80" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/bottomHelper"
+        android:id="@+id/descriptionHelper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

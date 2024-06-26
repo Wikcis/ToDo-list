@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist.Model.TaskModel
+import com.example.todolist.R
 
 class TaskAdapter(private val context: Context, private val tasksList: ArrayList<TaskModel>) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
@@ -21,7 +23,7 @@ class TaskAdapter(private val context: Context, private val tasksList: ArrayList
         holder.category.text = tasksList[position].category
         holder.creationDate.text = tasksList[position].creationDate
         holder.endDate.text = tasksList[position].endDate
-        if(tasksList[position].attachment){
+        if(tasksList[position].attachment != ""){
             holder.attachment.setImageResource(R.drawable.attachment)
         }
     }
