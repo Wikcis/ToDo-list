@@ -23,6 +23,10 @@ class TaskAdapter(private val context: Context, private val tasksList: ArrayList
         holder.category.text = tasksList[position].category
         holder.creationDate.text = tasksList[position].creationDate
         holder.endDate.text = tasksList[position].endDate
+        if(tasksList[position].notifications == 1){
+            holder.notifications.setImageResource(R.drawable.bell)
+        }
+
         if(tasksList[position].attachment != ""){
             holder.attachment.setImageResource(R.drawable.attachment)
         }
@@ -39,6 +43,7 @@ class TaskAdapter(private val context: Context, private val tasksList: ArrayList
         val creationDate: TextView = itemView.findViewById(R.id.creationDateTextView)
         val endDate: TextView = itemView.findViewById(R.id.endDateTextView)
         val attachment: ImageView = itemView.findViewById(R.id.attachmentImageView)
+        val notifications: ImageView = itemView.findViewById(R.id.bellImageView)
     }
 
 }

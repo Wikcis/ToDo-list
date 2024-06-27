@@ -53,7 +53,7 @@
         android:gravity="start|bottom"
         android:hint="End Date"
         app:layout_constraintBottom_toBottomOf="@id/endDateHelper"
-        app:layout_constraintEnd_toStartOf="@id/categorySpinner"
+        app:layout_constraintEnd_toStartOf="@id/categoryEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/descriptionHelper" />
 
@@ -85,10 +85,14 @@
         app:layout_constraintTop_toBottomOf="@id/endDateHelper"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-    <Spinner
-        android:id="@+id/categorySpinner"
+    <EditText
+        android:id="@+id/categoryEditText"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:hint="Category"
+        android:gravity="start|bottom"
         app:layout_constraintTop_toTopOf="@id/descriptionHelper"
         app:layout_constraintBottom_toBottomOf="@id/endDateHelper"
         app:layout_constraintEnd_toEndOf="parent"

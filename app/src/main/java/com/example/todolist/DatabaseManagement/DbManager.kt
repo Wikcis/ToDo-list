@@ -3,6 +3,7 @@ package com.example.todolist.DatabaseManagement
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.todolist.Model.TaskModel
@@ -10,7 +11,7 @@ import com.example.todolist.Model.TaskModel
 class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object{
-        private const val DB_NAME = "User_Tasks"
+        private const val DB_NAME = "User_Tasks.db"
         private const val DB_VERSION = 1
         private const val TABLE_NAME = "Tasks"
         private const val TASK_ID = "task_id"
@@ -20,7 +21,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         private const val TASK_CREATION_DATE = "creation_date"
         private const val TASK_END_DATE = "end_date"
         private const val TASK_ATTACHMENT = "attachment"
-
+        private const val TASK_NOTIFICATIONS = "notifications"
     }
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQry = "CREATE TABLE $TABLE_NAME (" +
@@ -30,7 +31,8 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
                 "$TASK_CATEGORY text," +
                 "$TASK_CREATION_DATE text, " +
                 "$TASK_END_DATE text, " +
-                "$TASK_ATTACHMENT text);"
+                "$TASK_ATTACHMENT text, " +
+                "$TASK_NOTIFICATIONS INTEGER);"
 
         db?.execSQL(createTableQry)
     }
@@ -39,8 +41,6 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
         onCreate(db)
     }
-
-    @SuppressLint("Range")
     fun getAllTasks(): ArrayList<TaskModel>{
         val taskList = ArrayList<TaskModel>()
         val db = writableDatabase
@@ -49,15 +49,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         if(cursor != null){
             if(cursor.moveToFirst()){
                 do{
-                    val id = cursor.getInt(cursor.getColumnIndex(TASK_ID))
-                    val title = cursor.getString(cursor.getColumnIndex(TASK_TITLE))
-                    val description = cursor.getString(cursor.getColumnIndex(TASK_DESCRIPTION))
-                    val category = cursor.getString(cursor.getColumnIndex(TASK_CATEGORY))
-                    val creationDate = cursor.getString(cursor.getColumnIndex(TASK_CREATION_DATE))
-                    val endDate = cursor.getString(cursor.getColumnIndex(TASK_END_DATE))
-                    val attachment = cursor.getString(cursor.getColumnIndex(TASK_TITLE))
-
-                    val task = TaskModel(id, title, description, category, creationDate, endDate, attachment)
+                    val task = getRow(cursor)
                     taskList.add(task)
                 }while (cursor.moveToNext())
             }
@@ -69,18 +61,11 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         val db = this.writableDatabase
         val contentValues = ContentValues()
 
-        contentValues.put(TASK_TITLE, task.title)
-        contentValues.put(TASK_DESCRIPTION, task.description)
-        contentValues.put(TASK_CATEGORY, task.category)
-        contentValues.put(TASK_CREATION_DATE, task.creationDate)
-        contentValues.put(TASK_END_DATE, task.endDate)
-        contentValues.put(TASK_ATTACHMENT, task.attachment)
+        putDetails(contentValues, task)
 
         val res = db.insert(TABLE_NAME, null, contentValues)
         return res.toInt() != -1
     }
-
-    @SuppressLint("Range")
     fun getTask(id: Int): TaskModel{
         val db = writableDatabase
 
@@ -88,18 +73,69 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         val cursor = db.rawQuery(selectQuery, null)
 
         cursor.moveToFirst()
-        val taskId = cursor.getInt(cursor.getColumnIndex(TASK_ID))
+
+        val task = getRow(cursor)
+
+        cursor.close()
+
+        return task
+    }
+
+    fun getAllTasksWithTitle(searchTitle: String): ArrayList<TaskModel>{
+        val taskList = ArrayList<TaskModel>()
+        val db = writableDatabase
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE LIKE ? COLLATE NOCASE"
+        val cursor = db.rawQuery(selectQuery, arrayOf("$searchTitle%"))
+        if(cursor != null){
+            if(cursor.moveToFirst()){
+                do{
+                    val task = getRow(cursor)
+                    taskList.add(task)
+                }while (cursor.moveToNext())
+            }
+        }
+        cursor.close()
+        return taskList
+    }
+
+    fun sortAllTasksWithTitle(searchTitle: String, sortType: String): ArrayList<TaskModel>{
+        val taskList = ArrayList<TaskModel>()
+        val db = writableDatabase
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE LIKE ? COLLATE NOCASE ORDER BY $TASK_TITLE $sortType "
+        val cursor = db.rawQuery(selectQuery, arrayOf("$searchTitle%"))
+        if(cursor != null){
+            if(cursor.moveToFirst()){
+                do{
+                    val task = getRow(cursor)
+                    taskList.add(task)
+                }while (cursor.moveToNext())
+            }
+        }
+        cursor.close()
+        return taskList
+    }
+
+    @SuppressLint("Range")
+    private fun getRow(cursor: Cursor): TaskModel {
+        val id = cursor.getInt(cursor.getColumnIndex(TASK_ID))
         val title = cursor.getString(cursor.getColumnIndex(TASK_TITLE))
         val description = cursor.getString(cursor.getColumnIndex(TASK_DESCRIPTION))
         val category = cursor.getString(cursor.getColumnIndex(TASK_CATEGORY))
         val creationDate = cursor.getString(cursor.getColumnIndex(TASK_CREATION_DATE))
         val endDate = cursor.getString(cursor.getColumnIndex(TASK_END_DATE))
         val attachment = cursor.getString(cursor.getColumnIndex(TASK_TITLE))
+        val notifications = cursor.getInt(cursor.getColumnIndex(TASK_NOTIFICATIONS))
 
-        val task = TaskModel(taskId, title, description, category, creationDate, endDate, attachment)
-        cursor.close()
-
-        return task
+        return TaskModel(
+            id,
+            title,
+            description,
+            category,
+            creationDate,
+            endDate,
+            attachment,
+            notifications
+        )
     }
 
     fun deleteTask(id: Int): Boolean{
@@ -114,15 +150,20 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         val db = this.writableDatabase
         val contentValues = ContentValues()
 
+        putDetails(contentValues, task)
+
+        val res = db.update(TABLE_NAME, contentValues, "$TASK_ID=?", arrayOf(task.id.toString()))
+        db.close()
+        return res != -1
+    }
+
+    private fun putDetails(contentValues: ContentValues, task: TaskModel){
         contentValues.put(TASK_TITLE, task.title)
         contentValues.put(TASK_DESCRIPTION, task.description)
         contentValues.put(TASK_CATEGORY, task.category)
         contentValues.put(TASK_CREATION_DATE, task.creationDate)
         contentValues.put(TASK_END_DATE, task.endDate)
         contentValues.put(TASK_ATTACHMENT, task.attachment)
-
-        val res = db.update(TABLE_NAME, contentValues, "$TASK_ID=?", arrayOf(task.id.toString()))
-        db.close()
-        return res != -1
+        contentValues.put(TASK_NOTIFICATIONS, task.notifications)
     }
 }

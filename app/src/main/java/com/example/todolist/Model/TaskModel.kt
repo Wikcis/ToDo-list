@@ -6,5 +6,6 @@ data class TaskModel(
     val category: String,
     val creationDate: String,
     val endDate: String,
-    val attachment: String
+    val attachment: String,
+    val notifications: Int
 )
