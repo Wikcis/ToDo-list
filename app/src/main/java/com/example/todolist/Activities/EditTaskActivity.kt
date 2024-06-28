@@ -16,28 +16,47 @@ import com.bumptech.glide.Glide
 import com.example.todolist.DatabaseManagement.DbManager
 import com.example.todolist.Model.TaskModel
 import com.example.todolist.R
-import com.example.todolist.databinding.ActivityAddTaskBinding
+import com.example.todolist.databinding.ActivityEditTaskBinding
 import java.io.File
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class AddTaskActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAddTaskBinding
-    private var dbManager : DbManager? = null
+class EditTaskActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityEditTaskBinding
+    private var dbManager: DbManager? = null
     private val PICK_FILE_REQUEST_CODE = 1
+    private var addAttachment = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityAddTaskBinding.inflate(layoutInflater)
+        binding = ActivityEditTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         dbManager = DbManager(this)
 
+        val taskId = intent.getIntExtra("TASK_ID", -1)
+        val task = dbManager!!.getTask(taskId)
+
+
+        binding.titleEditText.setText(task.title)
+        binding.descriptionEditText.setText(task.description)
+        binding.categoryEditText.setText(task.category)
+        binding.endDateEditText.setText(task.endDate)
+        binding.notificationSwitch.isChecked = task.notifications == 1
+
+        if (task.attachment.isNotEmpty()) {
+            Glide.with(this)
+                .load(task.attachment)
+                .into(binding.attachmentImageView)
+        }
         var notifications = 0
 
         binding.notificationSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -51,13 +70,10 @@ class AddTaskActivity : AppCompatActivity() {
         }
 
         binding.saveTaskButton.setOnClickListener {
-            if(binding.titleEditText.text.isBlank()){
+            if (binding.titleEditText.text.isBlank()) {
                 Toast.makeText(this, "There is no title!", Toast.LENGTH_SHORT).show()
-            } else if(dbManager!!.getTaskWithTitle(binding.titleEditText.text.toString()) != null){
-                Toast.makeText(this, "There is already task with this title!", Toast.LENGTH_SHORT).show()
             }
-            else
-            {
+            else {
                 val title = binding.titleEditText.text.toString()
                 val description = binding.descriptionEditText.text.toString()
                 val category = binding.categoryEditText.text.toString()
@@ -65,11 +81,12 @@ class AddTaskActivity : AppCompatActivity() {
                 val formatter = DateTimeFormatter.ofPattern("HH:mm yyyy-MM-dd")
                 val creationDate = currentDateTime.format(formatter)
                 val endDate = binding.endDateEditText.text.toString()
-                val attachment = if(binding.attachmentImageView.drawable != null) {
+                val attachment = if (addAttachment) {
                     binding.attachmentImageView.tag.toString()
-                } else ""
+                } else task.attachment
 
-                val task = TaskModel(0,
+                val taskTemp = TaskModel(
+                    taskId,
                     title,
                     description,
                     category,
@@ -79,7 +96,7 @@ class AddTaskActivity : AppCompatActivity() {
                     notifications
                 )
 
-                dbManager!!.insertTask(task)
+                dbManager!!.updateTask(taskTemp)
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
@@ -90,6 +107,16 @@ class AddTaskActivity : AppCompatActivity() {
             openFilePicker()
         }
 
+        binding.removeAttachmentButton.setOnClickListener {
+            clearAttachment()
+        }
+
+    }
+
+    private fun clearAttachment() {
+        binding.attachmentImageView.setImageDrawable(null)
+        addAttachment = true
+        binding.attachmentImageView.tag = ""
     }
 
     private fun openFilePicker() {
@@ -97,7 +124,10 @@ class AddTaskActivity : AppCompatActivity() {
             type = "*/*"
             addCategory(Intent.CATEGORY_OPENABLE)
         }
-        startActivityForResult(Intent.createChooser(intent, "Choose a file"), PICK_FILE_REQUEST_CODE)
+        startActivityForResult(
+            Intent.createChooser(intent, "Choose a file"),
+            PICK_FILE_REQUEST_CODE
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -113,6 +143,8 @@ class AddTaskActivity : AppCompatActivity() {
         Glide.with(this)
             .load(uri)
             .into(binding.attachmentImageView)
+
+        addAttachment = true
 
         binding.attachmentImageView.tag = uri
 

@@ -98,6 +98,21 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         return taskList
     }
 
+    fun getTaskWithTitle(title: String): TaskModel? {
+        val db = writableDatabase
+
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE = $title LIMIT 1"
+        val cursor = db.rawQuery(selectQuery, null)
+
+        if(!cursor.moveToFirst()) return null
+
+        val task = getRow(cursor)
+
+        cursor.close()
+
+        return task
+    }
+
     fun sortAllTasksWithTitle(searchTitle: String, sortType: String): ArrayList<TaskModel>{
         val taskList = ArrayList<TaskModel>()
         val db = writableDatabase
@@ -123,7 +138,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         val category = cursor.getString(cursor.getColumnIndex(TASK_CATEGORY))
         val creationDate = cursor.getString(cursor.getColumnIndex(TASK_CREATION_DATE))
         val endDate = cursor.getString(cursor.getColumnIndex(TASK_END_DATE))
-        val attachment = cursor.getString(cursor.getColumnIndex(TASK_TITLE))
+        val attachment = cursor.getString(cursor.getColumnIndex(TASK_ATTACHMENT))
         val notifications = cursor.getInt(cursor.getColumnIndex(TASK_NOTIFICATIONS))
 
         return TaskModel(

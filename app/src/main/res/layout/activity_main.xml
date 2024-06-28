@@ -20,6 +20,7 @@
         android:id="@+id/searchBarEditText"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:hint="Search task"
         app:layout_constraintBottom_toBottomOf="@id/searchBarHelper"
         app:layout_constraintEnd_toStartOf="@id/settingsButtonHelper"
         app:layout_constraintStart_toStartOf="@id/startHelper"
@@ -55,11 +56,11 @@
         android:clickable="true"
         android:focusable="true"
         android:tint="@color/white"
+        android:src="@drawable/add"
         app:layout_constraintBottom_toBottomOf="@id/descriptionHelper"
         app:layout_constraintEnd_toEndOf="@id/endHelper"
         app:layout_constraintStart_toStartOf="@id/settingsButtonHelper"
-        app:layout_constraintTop_toTopOf="@id/addTaskButtonHelper"
-        app:srcCompat="@drawable/add" />
+        app:layout_constraintTop_toTopOf="@id/addTaskButtonHelper" />
 
 
     <androidx.constraintlayout.widget.Guideline

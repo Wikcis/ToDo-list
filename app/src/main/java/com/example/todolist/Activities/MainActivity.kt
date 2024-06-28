@@ -9,23 +9,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todolist.Adapter.TaskAdapter
 import com.example.todolist.DatabaseManagement.DbManager
 import com.example.todolist.Model.TaskModel
 import com.example.todolist.R
 import com.example.todolist.databinding.ActivityMainBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var tasksList = ArrayList<TaskModel>()
     private var dbManager : DbManager? = null
     private var adapter : TaskAdapter? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -65,27 +60,22 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                lifecycleScope.launch {
-                    if(s.toString() != ""){
-                        searchTasks(s)
-                        fetchList(tasksList)
-                    }
-                    else{
-                        tasksList = dbManager!!.getAllTasks()
-                        fetchList(tasksList)
-                    }
-
+                if(s.toString() != ""){
+                    searchTasks(s)
+                    fetchList(tasksList)
+                }
+                else{
+                    tasksList = dbManager!!.getAllTasks()
+                    fetchList(tasksList)
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-    private suspend fun searchTasks(title: CharSequence?): ArrayList<TaskModel>{
-        return withContext(Dispatchers.IO) {
-            tasksList = dbManager!!.getAllTasksWithTitle(title.toString())
-            tasksList
-        }
+    private fun searchTasks(title: CharSequence?): ArrayList<TaskModel>{
+        tasksList = dbManager!!.getAllTasksWithTitle(title.toString())
+        return tasksList
     }
 
     @SuppressLint("NotifyDataSetChanged")
