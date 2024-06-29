@@ -10,8 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist.Adapter.CategoryAdapter
 import com.example.todolist.Adapter.TaskAdapter
 import com.example.todolist.DatabaseManagement.DbManager
+import com.example.todolist.Model.CategoryModel
 import com.example.todolist.Model.TaskModel
 import com.example.todolist.R
 import com.example.todolist.databinding.ActivityMainBinding
@@ -19,8 +22,11 @@ import com.example.todolist.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var tasksList = ArrayList<TaskModel>()
+    private var categoriesList = ArrayList<CategoryModel>()
     private var dbManager : DbManager? = null
-    private var adapter : TaskAdapter? = null
+    private var taskAdapter : TaskAdapter? = null
+    private var categoryAdapter : CategoryAdapter? = null
+    private var onCategoryClick = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,7 +40,10 @@ class MainActivity : AppCompatActivity() {
 
         dbManager = DbManager(this)
         tasksList = dbManager!!.getAllTasks()
-        fetchList(tasksList)
+        categoriesList = dbManager!!.getAllCategories()
+
+        fetchTasksList(tasksList)
+        fetchCategoriesList(categoriesList)
 
         binding.addTaskButton.setOnClickListener {
             val intent = Intent(applicationContext, AddTaskActivity::class.java)
@@ -48,9 +57,12 @@ class MainActivity : AppCompatActivity() {
 
         var sortType = "ASC"
         binding.sortButton.setOnClickListener {
+            val categoryName = if(onCategoryClick){
+                categoriesList[0].name
+            } else null
 
-            tasksList = dbManager!!.sortAllTasksWithTitle(binding.searchBarEditText.text.toString(), sortType)
-            fetchList(tasksList)
+            tasksList = dbManager!!.sortAllTasksWithTitle(binding.searchBarEditText.text.toString(), categoryName!!, sortType)
+            fetchTasksList(tasksList)
 
             sortType = if(sortType == "ASC") "DESC"
             else "ASC"
@@ -62,11 +74,11 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(s.toString() != ""){
                     searchTasks(s)
-                    fetchList(tasksList)
+                    fetchTasksList(tasksList)
                 }
                 else{
                     tasksList = dbManager!!.getAllTasks()
-                    fetchList(tasksList)
+                    fetchTasksList(tasksList)
                 }
             }
 
@@ -79,11 +91,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun fetchList(tasksList: ArrayList<TaskModel>){
-        adapter = TaskAdapter(applicationContext, tasksList)
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter?.notifyDataSetChanged()
+    private fun fetchTasksList(tasksList: ArrayList<TaskModel>){
+        taskAdapter = TaskAdapter(applicationContext, tasksList)
+        binding.tasksRecyclerView.adapter = taskAdapter
+        binding.tasksRecyclerView.layoutManager = LinearLayoutManager(this)
+        taskAdapter?.notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun fetchCategoriesList(categoriesList: ArrayList<CategoryModel>){
+        categoryAdapter = CategoryAdapter(applicationContext, categoriesList){category ->
+            onCategoryItemClick(category)
+        }
+        binding.categoriesRecyclerView.adapter = categoryAdapter
+        binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        categoryAdapter?.notifyDataSetChanged()
+    }
+
+    private fun onCategoryItemClick(category: CategoryModel) {
+        if(onCategoryClick){
+            categoriesList = dbManager!!.getAllCategories()
+            tasksList = dbManager!!.getAllTasks()
+            fetchTasksList(tasksList)
+            fetchCategoriesList(categoriesList)
+            onCategoryClick = false
+        }else{
+            onCategoryClick = true
+            categoriesList.clear()
+            categoriesList.add(category)
+            tasksList = dbManager!!.getAllTasksWithCategory(category.name)
+            fetchTasksList(tasksList)
+            fetchCategoriesList(categoriesList)
+        }
     }
 
 }

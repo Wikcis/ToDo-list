@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.todolist.Model.CategoryModel
 import com.example.todolist.Model.TaskModel
 
 class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -57,6 +58,24 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         cursor.close()
         return taskList
     }
+
+    @SuppressLint("Range")
+    fun getAllCategories(): ArrayList<CategoryModel>{
+        val categoriesList = ArrayList<CategoryModel>()
+        val db = writableDatabase
+        val selectQuery = "SELECT DISTINCT $TASK_CATEGORY FROM $TABLE_NAME"
+        val cursor = db.rawQuery(selectQuery, null)
+        if(cursor != null){
+            if(cursor.moveToFirst()){
+                do{
+                    val category = CategoryModel(cursor.getString(cursor.getColumnIndex(TASK_CATEGORY)))
+                    categoriesList.add(category)
+                }while (cursor.moveToNext())
+            }
+        }
+        cursor.close()
+        return categoriesList
+    }
     fun insertTask(task: TaskModel): Boolean{
         val db = this.writableDatabase
         val contentValues = ContentValues()
@@ -98,6 +117,23 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         return taskList
     }
 
+    fun getAllTasksWithCategory(category: String): ArrayList<TaskModel>{
+        val taskList = ArrayList<TaskModel>()
+        val db = writableDatabase
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $TASK_CATEGORY LIKE ? COLLATE NOCASE"
+        val cursor = db.rawQuery(selectQuery, arrayOf("$category%"))
+        if(cursor != null){
+            if(cursor.moveToFirst()){
+                do{
+                    val task = getRow(cursor)
+                    taskList.add(task)
+                }while (cursor.moveToNext())
+            }
+        }
+        cursor.close()
+        return taskList
+    }
+
     fun getTaskWithTitle(title: String): TaskModel? {
         val db = writableDatabase
 
@@ -113,10 +149,14 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         return task
     }
 
-    fun sortAllTasksWithTitle(searchTitle: String, sortType: String): ArrayList<TaskModel>{
+    fun sortAllTasksWithTitle(searchTitle: String, category: String?, sortType: String): ArrayList<TaskModel>{
         val taskList = ArrayList<TaskModel>()
         val db = writableDatabase
-        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE LIKE ? COLLATE NOCASE ORDER BY $TASK_TITLE $sortType "
+        val categorySearch = if(category != null){
+            "$TASK_CATEGORY = \"$category\" AND"
+        }else ""
+
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $categorySearch $TASK_TITLE LIKE ? COLLATE NOCASE ORDER BY $TASK_END_DATE $sortType "
         val cursor = db.rawQuery(selectQuery, arrayOf("$searchTitle%"))
         if(cursor != null){
             if(cursor.moveToFirst()){

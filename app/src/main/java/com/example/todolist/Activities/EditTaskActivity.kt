@@ -59,7 +59,7 @@ class EditTaskActivity : AppCompatActivity() {
         }
         var notifications = 0
 
-        binding.notificationSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 Toast.makeText(this, "Notifications are ON", Toast.LENGTH_SHORT).show()
                 notifications = 1
@@ -73,12 +73,12 @@ class EditTaskActivity : AppCompatActivity() {
             if (binding.titleEditText.text.isBlank()) {
                 Toast.makeText(this, "There is no title!", Toast.LENGTH_SHORT).show()
             }
-            else {
+            else if(validateDate(binding.endDateEditText.text.toString())){
                 val title = binding.titleEditText.text.toString()
                 val description = binding.descriptionEditText.text.toString()
                 val category = binding.categoryEditText.text.toString()
                 val currentDateTime = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("HH:mm yyyy-MM-dd")
+                val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
                 val creationDate = currentDateTime.format(formatter)
                 val endDate = binding.endDateEditText.text.toString()
                 val attachment = if (addAttachment) {
@@ -111,6 +111,30 @@ class EditTaskActivity : AppCompatActivity() {
             clearAttachment()
         }
 
+    }
+    private fun validateDate(date: String): Boolean {
+        try{
+            if(date.isEmpty()){
+                Toast.makeText(this, "You must specify execution date!", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
+            val localDate = LocalDateTime.parse(date, formatter)
+
+            if(!formatter.format(localDate).equals(date)){
+                Toast.makeText(this, "Execution date is incorrect!", Toast.LENGTH_SHORT).show()
+                return false
+            }else if(localDate <= LocalDateTime.now()){
+                Toast.makeText(this, "Date must be in the future!", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+        }catch (e: Exception){
+            Toast.makeText(this, "Execution date is incorrect!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
     }
 
     private fun clearAttachment() {
