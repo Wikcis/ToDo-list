@@ -1,4 +1,4 @@
-package com.example.todolist.Activities
+package com.example.todolist.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -7,15 +7,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.OpenableColumns
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.example.todolist.DatabaseManagement.DbManager
-import com.example.todolist.Model.TaskModel
+import com.example.todolist.databaseManagement.DbManager
+import com.example.todolist.model.TaskModel
 import com.example.todolist.R
 import com.example.todolist.databinding.ActivityAddTaskBinding
 import java.io.File
@@ -60,7 +59,9 @@ class AddTaskActivity : AppCompatActivity() {
             else if(validateDate(binding.endDateEditText.text.toString())){
                 val title = binding.titleEditText.text.toString()
                 val description = binding.descriptionEditText.text.toString()
-                val category = binding.categoryEditText.text.toString()
+                val category = binding.categoryEditText.text.ifEmpty {
+                    "No Category"
+                }.toString()
                 val currentDateTime = LocalDateTime.now()
                 val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
                 val creationDate = currentDateTime.format(formatter)

@@ -1,4 +1,4 @@
-package com.example.todolist.DatabaseManagement
+package com.example.todolist.databaseManagement
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -6,8 +6,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.example.todolist.Model.CategoryModel
-import com.example.todolist.Model.TaskModel
+import com.example.todolist.model.CategoryModel
+import com.example.todolist.model.TaskModel
 
 class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -50,7 +50,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         if(cursor != null){
             if(cursor.moveToFirst()){
                 do{
-                    val task = getRow(cursor)
+                    val task = getTaskRow(cursor)
                     taskList.add(task)
                 }while (cursor.moveToNext())
             }
@@ -93,7 +93,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
 
         cursor.moveToFirst()
 
-        val task = getRow(cursor)
+        val task = getTaskRow(cursor)
 
         cursor.close()
 
@@ -108,7 +108,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         if(cursor != null){
             if(cursor.moveToFirst()){
                 do{
-                    val task = getRow(cursor)
+                    val task = getTaskRow(cursor)
                     taskList.add(task)
                 }while (cursor.moveToNext())
             }
@@ -121,11 +121,11 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         val taskList = ArrayList<TaskModel>()
         val db = writableDatabase
         val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $TASK_CATEGORY LIKE ? COLLATE NOCASE"
-        val cursor = db.rawQuery(selectQuery, arrayOf("$category%"))
+        val cursor = db.rawQuery(selectQuery, arrayOf(category))
         if(cursor != null){
             if(cursor.moveToFirst()){
                 do{
-                    val task = getRow(cursor)
+                    val task = getTaskRow(cursor)
                     taskList.add(task)
                 }while (cursor.moveToNext())
             }
@@ -136,23 +136,23 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
 
     fun getTaskWithTitle(title: String): TaskModel? {
         val db = writableDatabase
-
-        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE = $title LIMIT 1"
+        val titleToQuery = "\"$title\""
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE = $titleToQuery LIMIT 1"
         val cursor = db.rawQuery(selectQuery, null)
 
         if(!cursor.moveToFirst()) return null
 
-        val task = getRow(cursor)
+        val task = getTaskRow(cursor)
 
         cursor.close()
 
         return task
     }
 
-    fun sortAllTasksWithTitle(searchTitle: String, category: String?, sortType: String): ArrayList<TaskModel>{
+    fun sortAllTasksWithTitle(searchTitle: String, category: String, sortType: String): ArrayList<TaskModel>{
         val taskList = ArrayList<TaskModel>()
         val db = writableDatabase
-        val categorySearch = if(category != null){
+        val categorySearch = if(category.isNotEmpty()){
             "$TASK_CATEGORY = \"$category\" AND"
         }else ""
 
@@ -161,7 +161,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         if(cursor != null){
             if(cursor.moveToFirst()){
                 do{
-                    val task = getRow(cursor)
+                    val task = getTaskRow(cursor)
                     taskList.add(task)
                 }while (cursor.moveToNext())
             }
@@ -171,7 +171,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
     }
 
     @SuppressLint("Range")
-    private fun getRow(cursor: Cursor): TaskModel {
+    private fun getTaskRow(cursor: Cursor): TaskModel {
         val id = cursor.getInt(cursor.getColumnIndex(TASK_ID))
         val title = cursor.getString(cursor.getColumnIndex(TASK_TITLE))
         val description = cursor.getString(cursor.getColumnIndex(TASK_DESCRIPTION))

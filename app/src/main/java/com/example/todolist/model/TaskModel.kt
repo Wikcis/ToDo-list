@@ -1,4 +1,4 @@
-package com.example.todolist.Model
+package com.example.todolist.model
 data class TaskModel(
     var id: Int,
     val title: String,

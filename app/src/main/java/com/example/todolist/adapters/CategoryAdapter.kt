@@ -1,4 +1,4 @@
-package com.example.todolist.Adapter
+package com.example.todolist.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.Model.CategoryModel
+import com.example.todolist.model.CategoryModel
 import com.example.todolist.R
+import com.example.todolist.interfaces.OnCategoryClickListener
 
 class CategoryAdapter(
     private val context: Context,
     private val categoriesList: ArrayList<CategoryModel>,
-    private val itemClickListener: (CategoryModel) -> Unit
+    private val categoryClickListener: OnCategoryClickListener
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -25,7 +26,7 @@ class CategoryAdapter(
         holder.name.text = category.name
 
         holder.itemView.setOnClickListener {
-            itemClickListener(category)
+            categoryClickListener.onCategoryClick(category)
         }
     }
 

@@ -1,27 +1,25 @@
-package com.example.todolist.Adapter
+package com.example.todolist.adapters
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.Activities.EditTaskActivity
-import com.example.todolist.DatabaseManagement.DbManager
-import com.example.todolist.Model.TaskModel
 import com.example.todolist.R
+import com.example.todolist.interfaces.OnTaskClickListener
+import com.example.todolist.model.TaskModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class TaskAdapter(
     private val context: Context,
     private val tasksList: ArrayList<TaskModel>,
+    private val taskClickListener: OnTaskClickListener
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
-    private var dbManager : DbManager? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.task_item, parent, false)
-        dbManager = DbManager(context)
         return TaskViewHolder(view)
     }
 
@@ -33,6 +31,12 @@ class TaskAdapter(
         holder.category.text = task.category
         holder.creationDate.text = task.creationDate
         holder.endDate.text = task.endDate
+
+        if(isEndDatePast(task.endDate)){
+            holder.statusImageView.setImageResource(R.drawable.tick)
+        } else {
+            holder.statusImageView.setImageResource(R.drawable.x)
+        }
 
         if (task.notifications == 1) {
             holder.notifications.setImageResource(R.drawable.bell)
@@ -47,20 +51,22 @@ class TaskAdapter(
         }
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, EditTaskActivity::class.java).apply {
-                putExtra("TASK_ID", task.id)
-                if (context !is Activity) {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-            }
-            context.startActivity(intent)
+            taskClickListener.onTaskClick(task)
         }
 
         holder.itemView.setOnLongClickListener {
-            removeTask(task.id, position)
+            taskClickListener.onTaskLongClick(task, position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, tasksList.size)
             true
         }
 
+    }
+
+    private fun isEndDatePast(endDate: String): Boolean {
+        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
+        val endDateTime = LocalDateTime.parse(endDate, formatter)
+        return endDateTime.isBefore(LocalDateTime.now())
     }
 
     override fun getItemCount(): Int {
@@ -75,12 +81,6 @@ class TaskAdapter(
         val endDate: TextView = itemView.findViewById(R.id.endDateTextView)
         val attachment: ImageView = itemView.findViewById(R.id.attachmentImageView)
         val notifications: ImageView = itemView.findViewById(R.id.bellImageView)
+        val statusImageView: ImageView = itemView.findViewById(R.id.statusImageView)
     }
-    private fun removeTask(id: Int, position: Int) {
-        dbManager!!.deleteTask(id)
-        tasksList.removeAt(position)
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, tasksList.size)
-    }
-
 }

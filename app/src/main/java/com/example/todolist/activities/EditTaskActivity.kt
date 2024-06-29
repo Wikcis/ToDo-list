@@ -1,4 +1,4 @@
-package com.example.todolist.Activities
+package com.example.todolist.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.example.todolist.DatabaseManagement.DbManager
-import com.example.todolist.Model.TaskModel
+import com.example.todolist.databaseManagement.DbManager
+import com.example.todolist.model.TaskModel
 import com.example.todolist.R
 import com.example.todolist.databinding.ActivityEditTaskBinding
 import java.io.File
