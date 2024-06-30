@@ -7,20 +7,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.OpenableColumns
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.example.todolist.databaseManagement.DbManager
+import com.example.todolist.management.DbManager
 import com.example.todolist.model.TaskModel
 import com.example.todolist.R
+import com.example.todolist.management.TimeManager
 import com.example.todolist.databinding.ActivityEditTaskBinding
+import com.example.todolist.objects.ToastMessages
 import java.io.File
 import java.io.IOException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class EditTaskActivity : AppCompatActivity() {
 
@@ -45,7 +46,6 @@ class EditTaskActivity : AppCompatActivity() {
         val taskId = intent.getIntExtra("TASK_ID", -1)
         val task = dbManager!!.getTask(taskId)
 
-
         binding.titleEditText.setText(task.title)
         binding.descriptionEditText.setText(task.description)
         binding.categoryEditText.setText(task.category)
@@ -53,37 +53,34 @@ class EditTaskActivity : AppCompatActivity() {
         binding.notificationSwitch.isChecked = task.notifications == 1
 
         if (task.attachment.isNotEmpty()) {
-            Glide.with(this)
-                .load(task.attachment)
-                .into(binding.attachmentImageView)
+            glideImage(task.attachment, binding.attachmentImageView)
         }
         var notifications = 0
 
         binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Toast.makeText(this, "Notifications are ON", Toast.LENGTH_SHORT).show()
-                notifications = 1
+            notifications = if (isChecked){
+                showToast(ToastMessages.NOTIFICATIONS_ON)
+                1
             } else {
-                notifications = 0
-                Toast.makeText(this, "Notifications are OFF", Toast.LENGTH_SHORT).show()
+                showToast(ToastMessages.NOTIFICATIONS_OFF)
+                0
             }
+
         }
 
         binding.saveTaskButton.setOnClickListener {
-            if (binding.titleEditText.text.isBlank()) {
-                Toast.makeText(this, "There is no title!", Toast.LENGTH_SHORT).show()
-            }
-            else if(validateDate(binding.endDateEditText.text.toString())){
+            if (binding.titleEditText.text.isBlank()) showToast(ToastMessages.NO_TITLE)
+
+            val toastMessage = TimeManager().validateDate(binding.endDateEditText.text.toString())
+
+            if(toastMessage == ToastMessages.SUCCESS){
                 val title = binding.titleEditText.text.toString()
                 val description = binding.descriptionEditText.text.toString()
                 val category = binding.categoryEditText.text.toString()
-                val currentDateTime = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
-                val creationDate = currentDateTime.format(formatter)
+                val creationDate = TimeManager().getCurrentDate()
                 val endDate = binding.endDateEditText.text.toString()
-                val attachment = if (addAttachment) {
-                    binding.attachmentImageView.tag.toString()
-                } else task.attachment
+                val attachment = if (addAttachment) binding.attachmentImageView.tag.toString()
+                                else task.attachment
 
                 val taskTemp = TaskModel(
                     taskId,
@@ -100,7 +97,8 @@ class EditTaskActivity : AppCompatActivity() {
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
-            }
+            } else
+                showToast(toastMessage)
         }
 
         binding.attachmentButton.setOnClickListener {
@@ -110,37 +108,19 @@ class EditTaskActivity : AppCompatActivity() {
         binding.removeAttachmentButton.setOnClickListener {
             clearAttachment()
         }
-
     }
-    private fun validateDate(date: String): Boolean {
-        try{
-            if(date.isEmpty()){
-                Toast.makeText(this, "You must specify execution date!", Toast.LENGTH_SHORT).show()
-                return false
-            }
 
-            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
-            val localDate = LocalDateTime.parse(date, formatter)
-
-            if(!formatter.format(localDate).equals(date)){
-                Toast.makeText(this, "Execution date is incorrect!", Toast.LENGTH_SHORT).show()
-                return false
-            }else if(localDate <= LocalDateTime.now()){
-                Toast.makeText(this, "Date must be in the future!", Toast.LENGTH_SHORT).show()
-                return false
-            }
-
-        }catch (e: Exception){
-            Toast.makeText(this, "Execution date is incorrect!", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        return true
+    private fun glideImage(uri: String, image: ImageView) {
+        Glide.with(this)
+            .load(uri)
+            .into(image)
     }
 
     private fun clearAttachment() {
         binding.attachmentImageView.setImageDrawable(null)
-        addAttachment = true
         binding.attachmentImageView.tag = ""
+
+        addAttachment = true
     }
 
     private fun openFilePicker() {
@@ -164,9 +144,7 @@ class EditTaskActivity : AppCompatActivity() {
     }
 
     private fun handleFileUri(uri: Uri) {
-        Glide.with(this)
-            .load(uri)
-            .into(binding.attachmentImageView)
+        glideImage(uri.toString(), binding.attachmentImageView)
 
         addAttachment = true
 
@@ -214,5 +192,8 @@ class EditTaskActivity : AppCompatActivity() {
             }
         }
         return result
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

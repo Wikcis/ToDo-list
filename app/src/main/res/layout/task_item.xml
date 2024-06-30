@@ -9,7 +9,7 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        app:cardBackgroundColor="@color/task"
+        app:cardBackgroundColor="@color/main"
         app:cardCornerRadius="20dp"
         app:cardElevation="8dp"
         android:layout_marginTop="10dp"

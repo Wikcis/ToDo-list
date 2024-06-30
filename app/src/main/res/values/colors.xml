@@ -2,8 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="task">#F0ED46</color>
+    <color name="main">#F0ED46</color>
     <color name="category">#F0C346</color>
     <color name="button">#EA46F0</color>
+    <color name="saveButton">#9546F0</color>
 
 </resources>

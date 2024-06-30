@@ -127,7 +127,7 @@
         android:autoSizeMaxTextSize="30dp"
         android:autoSizeMinTextSize="16dp"
         android:autoSizeTextType="uniform"
-        android:backgroundTint="@color/task"
+        android:backgroundTint="@color/main"
         android:textColor="@color/black"
         android:text="Save task"
         app:layout_constraintTop_toBottomOf="@id/bottomHelper"

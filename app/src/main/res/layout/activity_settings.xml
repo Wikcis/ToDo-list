@@ -5,6 +5,113 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/main"
     tools:context=".activities.SettingsActivity">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:autoSizeMaxTextSize="70sp"
+        android:autoSizeMinTextSize="20sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="top|center"
+        android:text="Settings"
+        app:layout_constraintBottom_toBottomOf="@+id/topHelper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/hideTasksTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:autoSizeMaxTextSize="40sp"
+        android:autoSizeMinTextSize="20sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="Hide ended tasks"
+        app:layout_constraintBottom_toTopOf="@id/notificationTextView"
+        app:layout_constraintEnd_toStartOf="@id/checkbox"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topHelper" />
+
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleX="2"
+        android:scaleY="2"
+        app:layout_constraintBottom_toTopOf="@id/notificationTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/hideTasksTextView"
+        app:layout_constraintTop_toBottomOf="@id/topHelper" />
+
+    <TextView
+        android:id="@+id/notificationTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:autoSizeMaxTextSize="36sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="How many minutes before do you want to get notification?"
+        app:layout_constraintBottom_toTopOf="@+id/spinnerHelper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hideTasksTextView" />
+
+    <Spinner
+        android:id="@+id/notificationSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="2"
+        android:scaleY="2"
+        app:layout_constraintBottom_toTopOf="@id/saveButtonHelper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinnerHelper"
+        app:layout_constraintVertical_bias="0.3" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:autoSizeMaxTextSize="36sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeTextType="uniform"
+        android:text="Save settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/saveButtonHelper" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/spinnerHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.65" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/saveButtonHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.80" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

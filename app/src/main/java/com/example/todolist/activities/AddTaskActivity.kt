@@ -7,20 +7,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.OpenableColumns
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.example.todolist.databaseManagement.DbManager
+import com.example.todolist.management.DbManager
 import com.example.todolist.model.TaskModel
 import com.example.todolist.R
+import com.example.todolist.management.TimeManager
 import com.example.todolist.databinding.ActivityAddTaskBinding
+import com.example.todolist.objects.ToastMessages
 import java.io.File
 import java.io.IOException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class AddTaskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddTaskBinding
@@ -41,36 +42,34 @@ class AddTaskActivity : AppCompatActivity() {
         var notifications = 0
 
         binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Toast.makeText(this, "Notifications are ON", Toast.LENGTH_SHORT).show()
-                notifications = 1
-            } else {
-                notifications = 0
-                Toast.makeText(this, "Notifications are OFF", Toast.LENGTH_SHORT).show()
-            }
+            if (isChecked) showToast(ToastMessages.NOTIFICATIONS_OFF)
+            else showToast(ToastMessages.NOTIFICATIONS_OFF)
+
+            notifications = 1 - notifications
         }
 
         binding.saveTaskButton.setOnClickListener {
-            if(binding.titleEditText.text.isBlank()){
-                Toast.makeText(this, "There is no title!", Toast.LENGTH_SHORT).show()
-            } else if(dbManager!!.getTaskWithTitle(binding.titleEditText.text.toString()) != null){
-                Toast.makeText(this, "There is already task with this title!", Toast.LENGTH_SHORT).show()
+            if (binding.titleEditText.text.isBlank()) {
+                showToast(ToastMessages.NO_TITLE)
+            } else if (dbManager!!.getTaskWithTitle(binding.titleEditText.text.toString()) != null) {
+                showToast(ToastMessages.TITLE_UNAVAILABLE)
             }
-            else if(validateDate(binding.endDateEditText.text.toString())){
+
+            val toastMessage = TimeManager().validateDate(binding.endDateEditText.text.toString())
+
+            if (toastMessage == ToastMessages.SUCCESS) {
                 val title = binding.titleEditText.text.toString()
                 val description = binding.descriptionEditText.text.toString()
-                val category = binding.categoryEditText.text.ifEmpty {
-                    "No Category"
-                }.toString()
-                val currentDateTime = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
-                val creationDate = currentDateTime.format(formatter)
+                val category = binding.categoryEditText.text.ifEmpty { "No Category" }.toString()
+                val creationDate = TimeManager().getCurrentDate()
                 val endDate = binding.endDateEditText.text.toString()
-                val attachment = if(binding.attachmentImageView.drawable != null) {
+
+                val attachment = if (binding.attachmentImageView.drawable != null) {
                     binding.attachmentImageView.tag.toString()
                 } else ""
 
-                val task = TaskModel(0,
+                val task = TaskModel(
+                    0,
                     title,
                     description,
                     category,
@@ -84,38 +83,13 @@ class AddTaskActivity : AppCompatActivity() {
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
-            }
+            } else
+                showToast(toastMessage)
         }
 
         binding.attachmentButton.setOnClickListener {
             openFilePicker()
         }
-
-    }
-
-    private fun validateDate(date: String): Boolean {
-        try{
-            if(date.isEmpty()){
-                Toast.makeText(this, "You must specify execution date!", Toast.LENGTH_SHORT).show()
-                return false
-            }
-
-            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
-            val localDate = LocalDateTime.parse(date, formatter)
-
-            if(!formatter.format(localDate).equals(date)){
-                Toast.makeText(this, "Execution date is incorrect!", Toast.LENGTH_SHORT).show()
-                return false
-            }else if(localDate <= LocalDateTime.now()){
-                Toast.makeText(this, "Date must be in the future!", Toast.LENGTH_SHORT).show()
-                return false
-            }
-
-        }catch (e: Exception){
-            Toast.makeText(this, "Execution date is incorrect!", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        return true
     }
 
     private fun openFilePicker() {
@@ -136,9 +110,7 @@ class AddTaskActivity : AppCompatActivity() {
     }
 
     private fun handleFileUri(uri: Uri) {
-        Glide.with(this)
-            .load(uri)
-            .into(binding.attachmentImageView)
+        glideImage(uri.toString(), binding.attachmentImageView)
 
         binding.attachmentImageView.tag = uri
 
@@ -184,5 +156,15 @@ class AddTaskActivity : AppCompatActivity() {
             }
         }
         return result
+    }
+
+    private fun glideImage(uri: String, image: ImageView) {
+        Glide.with(this)
+            .load(uri)
+            .into(image)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

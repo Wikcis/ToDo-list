@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.adapters.CategoryAdapter
 import com.example.todolist.adapters.TaskAdapter
-import com.example.todolist.databaseManagement.DbManager
+import com.example.todolist.management.DbManager
 import com.example.todolist.databinding.ActivityMainBinding
 import com.example.todolist.interfaces.OnCategoryClickListener
 import com.example.todolist.interfaces.OnTaskClickListener
@@ -22,10 +22,8 @@ import com.example.todolist.model.CategoryModel
 import com.example.todolist.model.TaskModel
 
 /*TODO:
-    Ogarnąć status zakonczone/niezakonczone ikonka itp
     Ustawienia aplikacji:
-        - Ukrywanie skonczonnych zadan
-        - Ile minut pzed czasem wykonania powinno buć powiadomoenie
+        - Ile minut pzed czasem wykonania powinno buć powiadomoenie ----------
     Powiadomienia
     Załączniki otwierać z dcim
  */
@@ -38,6 +36,9 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickLi
     private var taskAdapter : TaskAdapter? = null
     private var categoryAdapter : CategoryAdapter? = null
     private var onCategoryClick = false
+    private val ascSortOrder = "ASC"
+    private val descSortOrder = "DESC"
+    private val taskIdText = "TASK_ID"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickLi
             startActivity(intent)
         }
 
-        var sortType = "ASC"
+        var sortType = ascSortOrder
         binding.sortButton.setOnClickListener {
             val categoryName = if(onCategoryClick){
                 categoriesList[0].name
@@ -73,8 +74,8 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickLi
             tasksList = dbManager!!.sortAllTasksWithTitle(binding.searchBarEditText.text.toString(), categoryName, sortType)
             fetchTasksList()
 
-            sortType = if(sortType == "ASC") "DESC"
-            else "ASC"
+            sortType = if(sortType == ascSortOrder) descSortOrder
+            else ascSortOrder
         }
 
         binding.searchBarEditText.addTextChangedListener(object : TextWatcher {
@@ -113,9 +114,7 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickLi
     }
     override fun onTaskClick(task: TaskModel) {
         val intent = Intent(this, EditTaskActivity::class.java)
-
-        intent.putExtra("TASK_ID", task.id)
-
+        intent.putExtra(taskIdText, task.id)
         startActivity(intent)
     }
 

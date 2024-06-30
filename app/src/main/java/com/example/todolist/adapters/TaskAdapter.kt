@@ -9,9 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.interfaces.OnTaskClickListener
+import com.example.todolist.management.TimeManager
 import com.example.todolist.model.TaskModel
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class TaskAdapter(
     private val context: Context,
@@ -32,23 +31,21 @@ class TaskAdapter(
         holder.creationDate.text = task.creationDate
         holder.endDate.text = task.endDate
 
-        if(isEndDatePast(task.endDate)){
+        if(TimeManager().isDatePast(task.endDate)){
             holder.statusImageView.setImageResource(R.drawable.tick)
         } else {
             holder.statusImageView.setImageResource(R.drawable.x)
         }
 
-        if (task.notifications == 1) {
+        if (task.notifications == 1)
             holder.notifications.setImageResource(R.drawable.bell)
-        } else {
+        else
             holder.notifications.setImageResource(R.drawable.bell_slash)
-        }
 
-        if (task.attachment.isNotEmpty()) {
+        if (task.attachment.isNotEmpty())
             holder.attachment.setImageResource(R.drawable.attachment)
-        } else {
+        else
             holder.attachment.setImageDrawable(null)
-        }
 
         holder.itemView.setOnClickListener {
             taskClickListener.onTaskClick(task)
@@ -61,12 +58,6 @@ class TaskAdapter(
             true
         }
 
-    }
-
-    private fun isEndDatePast(endDate: String): Boolean {
-        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
-        val endDateTime = LocalDateTime.parse(endDate, formatter)
-        return endDateTime.isBefore(LocalDateTime.now())
     }
 
     override fun getItemCount(): Int {
