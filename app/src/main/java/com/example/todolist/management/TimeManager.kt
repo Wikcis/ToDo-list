@@ -3,6 +3,7 @@ package com.example.todolist.management
 import com.example.todolist.objects.ToastMessages
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class TimeManager {
     private val pattern = "HH:mm:ss yyyy-MM-dd"
@@ -12,8 +13,14 @@ class TimeManager {
         return LocalDateTime.now().format(formatter)
     }
 
-    fun formatCurrentDate(): String{
-        return formatter.format(LocalDateTime.now())
+    fun formatDate(date: LocalDateTime): String{
+        return formatter.format(date)
+    }
+
+    fun updateTime(date: String, minutes: Long): String{
+        val dateTime = LocalDateTime.parse(date, formatter)
+        val updatedDateTime = dateTime.plusMinutes(minutes)
+        return formatDate(updatedDateTime)
     }
 
     fun validateDate(date: String): String {

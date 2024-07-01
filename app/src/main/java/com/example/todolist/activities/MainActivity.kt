@@ -12,21 +12,15 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
+import com.example.todolist.Reminder
 import com.example.todolist.adapters.CategoryAdapter
 import com.example.todolist.adapters.TaskAdapter
-import com.example.todolist.management.DbManager
 import com.example.todolist.databinding.ActivityMainBinding
 import com.example.todolist.interfaces.OnCategoryClickListener
 import com.example.todolist.interfaces.OnTaskClickListener
+import com.example.todolist.management.DbManager
 import com.example.todolist.model.CategoryModel
 import com.example.todolist.model.TaskModel
-
-/*TODO:
-    Ustawienia aplikacji:
-        - Ile minut pzed czasem wykonania powinno buć powiadomoenie ----------
-    Powiadomienia
-    Załączniki otwierać z dcim
- */
 
 class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickListener {
     private lateinit var binding: ActivityMainBinding
@@ -49,11 +43,15 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickLi
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         dbManager = DbManager(this)
-        getAllItemsForLists()
 
+        getAllItemsForLists()
         fetchLists()
+
+        val reminder = Reminder(applicationContext)
+        if(!reminder.getIsRunning()){
+            reminder.run()
+        }
 
         binding.addTaskButton.setOnClickListener {
             val intent = Intent(applicationContext, AddTaskActivity::class.java)

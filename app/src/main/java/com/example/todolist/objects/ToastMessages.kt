@@ -9,4 +9,5 @@ object ToastMessages {
     const val INCORRECT_EXECUTION_DATE = "Execution date is incorrect!"
     const val PAST_EXECUTION_DATE = "Date must be in the future!"
     const val SUCCESS = "Success!"
+    const val TASK_NOT_CHANGED = "Task has not been changed!"
 }

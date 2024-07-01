@@ -54,8 +54,8 @@ class EditTaskActivity : AppCompatActivity() {
 
         if (task.attachment.isNotEmpty()) {
             glideImage(task.attachment, binding.attachmentImageView)
-        }
-        var notifications = 0
+        } else binding.attachmentImageView.tag = ""
+        var notifications = task.notifications
 
         binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
             notifications = if (isChecked){
@@ -65,40 +65,45 @@ class EditTaskActivity : AppCompatActivity() {
                 showToast(ToastMessages.NOTIFICATIONS_OFF)
                 0
             }
-
         }
 
         binding.saveTaskButton.setOnClickListener {
-            if (binding.titleEditText.text.isBlank()) showToast(ToastMessages.NO_TITLE)
-
-            val toastMessage = TimeManager().validateDate(binding.endDateEditText.text.toString())
-
-            if(toastMessage == ToastMessages.SUCCESS){
-                val title = binding.titleEditText.text.toString()
-                val description = binding.descriptionEditText.text.toString()
-                val category = binding.categoryEditText.text.toString()
-                val creationDate = TimeManager().getCurrentDate()
-                val endDate = binding.endDateEditText.text.toString()
-                val attachment = if (addAttachment) binding.attachmentImageView.tag.toString()
-                                else task.attachment
-
-                val taskTemp = TaskModel(
-                    taskId,
-                    title,
-                    description,
-                    category,
-                    creationDate,
-                    endDate,
-                    attachment,
-                    notifications
-                )
-
-                dbManager!!.updateTask(taskTemp)
-
+            if(ifTaskIsTheSame(task, notifications)){
+                showToast(ToastMessages.TASK_NOT_CHANGED)
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
-            } else
-                showToast(toastMessage)
+            }else {
+                if (binding.titleEditText.text.isBlank()) showToast(ToastMessages.NO_TITLE)
+
+                val toastMessage =
+                    TimeManager().validateDate(binding.endDateEditText.text.toString())
+
+                if (toastMessage == ToastMessages.SUCCESS) {
+                    val title = binding.titleEditText.text.toString()
+                    val description = binding.descriptionEditText.text.toString()
+                    val category = binding.categoryEditText.text.toString()
+                    val endDate = binding.endDateEditText.text.toString()
+                    val attachment = if (addAttachment) binding.attachmentImageView.tag.toString()
+                    else task.attachment
+
+                    val taskTemp = TaskModel(
+                        taskId,
+                        title,
+                        description,
+                        category,
+                        task.creationDate,
+                        endDate,
+                        attachment,
+                        notifications
+                    )
+
+                    dbManager!!.updateTask(taskTemp)
+
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                } else
+                    showToast(toastMessage)
+            }
         }
 
         binding.attachmentButton.setOnClickListener {
@@ -108,6 +113,20 @@ class EditTaskActivity : AppCompatActivity() {
         binding.removeAttachmentButton.setOnClickListener {
             clearAttachment()
         }
+    }
+
+    private fun ifTaskIsTheSame(task: TaskModel, notifications: Int): Boolean {
+        val taskTemp = TaskModel(
+            task.id,
+            binding.titleEditText.text.toString(),
+            binding.descriptionEditText.text.toString(),
+            binding.categoryEditText.text.toString(),
+            task.creationDate,
+            binding.endDateEditText.text.toString(),
+            binding.attachmentImageView.tag.toString(),
+            notifications
+        )
+        return task == taskTemp
     }
 
     private fun glideImage(uri: String, image: ImageView) {

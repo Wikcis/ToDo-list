@@ -3,15 +3,19 @@ package com.example.todolist.management
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.content.SharedPreferences
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.example.todolist.model.CategoryModel
 import com.example.todolist.model.TaskModel
+import java.time.LocalDateTime
 
 class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
-    private val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    private val hideTasks = prefs.getString("hide_tasks", false.toString())
+    private val prefs: SharedPreferences? = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    private val hideTasks = prefs?.getString("hide_tasks", false.toString())
+    private val minutes = prefs?.getString("minutes", "1 min")
     companion object{
         private const val DB_NAME = "User_Tasks.db"
         private const val DB_VERSION = 1
@@ -115,6 +119,20 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         return getTasks("SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE LIKE ? COLLATE NOCASE $queryHideTasks", arrayOf("$searchTitle%"))
     }
 
+    fun getTasksCloseToEndDate(): ArrayList<TaskModel>{
+        val queryHideTasks = makeHideTasksQuery(false)
+        val localDate = TimeManager().formatDate(LocalDateTime.now())
+        val minutesString = minutes?.filter { it.isDigit() }
+        val updatedLocalDate = TimeManager().updateTime(localDate, minutesString!!.toLong())
+        return getTasks(
+            "SELECT * FROM $TABLE_NAME " +
+                    "WHERE $TASK_END_DATE BETWEEN \"$localDate\" " +
+                    "AND \"$updatedLocalDate\" " +
+                    "AND $TASK_NOTIFICATIONS = 1 " +
+                    queryHideTasks,
+            null)
+    }
+
     fun getAllTasksWithCategory(category: String): ArrayList<TaskModel>{
         val queryHideTasks = makeHideTasksQuery(false)
         return getTasks("SELECT * FROM $TABLE_NAME WHERE $TASK_CATEGORY LIKE ? COLLATE NOCASE $queryHideTasks", arrayOf(category))
@@ -190,7 +208,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         val statement = if(whereStatement){
             WHERE_STATEMENT
         } else AND_STATEMENT
-        val localDate = TimeManager().formatCurrentDate()
+        val localDate = TimeManager().formatDate(LocalDateTime.now())
 
         return if(hideTasks.toBoolean()){
             "$statement $TASK_END_DATE > \"$localDate\""

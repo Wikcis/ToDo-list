@@ -42,7 +42,7 @@ class AddTaskActivity : AppCompatActivity() {
         var notifications = 0
 
         binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) showToast(ToastMessages.NOTIFICATIONS_OFF)
+            if (isChecked) showToast(ToastMessages.NOTIFICATIONS_ON)
             else showToast(ToastMessages.NOTIFICATIONS_OFF)
 
             notifications = 1 - notifications
@@ -53,38 +53,38 @@ class AddTaskActivity : AppCompatActivity() {
                 showToast(ToastMessages.NO_TITLE)
             } else if (dbManager!!.getTaskWithTitle(binding.titleEditText.text.toString()) != null) {
                 showToast(ToastMessages.TITLE_UNAVAILABLE)
+            } else{
+                val toastMessage = TimeManager().validateDate(binding.endDateEditText.text.toString())
+
+                if (toastMessage == ToastMessages.SUCCESS) {
+                    val title = binding.titleEditText.text.toString()
+                    val description = binding.descriptionEditText.text.toString()
+                    val category = binding.categoryEditText.text.ifEmpty { "No Category" }.toString()
+                    val creationDate = TimeManager().getCurrentDate()
+                    val endDate = binding.endDateEditText.text.toString()
+
+                    val attachment = if (binding.attachmentImageView.drawable != null) {
+                        binding.attachmentImageView.tag.toString()
+                    } else ""
+
+                    val task = TaskModel(
+                        0,
+                        title,
+                        description,
+                        category,
+                        creationDate,
+                        endDate,
+                        attachment,
+                        notifications
+                    )
+
+                    dbManager!!.insertTask(task)
+
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                } else
+                    showToast(toastMessage)
             }
-
-            val toastMessage = TimeManager().validateDate(binding.endDateEditText.text.toString())
-
-            if (toastMessage == ToastMessages.SUCCESS) {
-                val title = binding.titleEditText.text.toString()
-                val description = binding.descriptionEditText.text.toString()
-                val category = binding.categoryEditText.text.ifEmpty { "No Category" }.toString()
-                val creationDate = TimeManager().getCurrentDate()
-                val endDate = binding.endDateEditText.text.toString()
-
-                val attachment = if (binding.attachmentImageView.drawable != null) {
-                    binding.attachmentImageView.tag.toString()
-                } else ""
-
-                val task = TaskModel(
-                    0,
-                    title,
-                    description,
-                    category,
-                    creationDate,
-                    endDate,
-                    attachment,
-                    notifications
-                )
-
-                dbManager!!.insertTask(task)
-
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-            } else
-                showToast(toastMessage)
         }
 
         binding.attachmentButton.setOnClickListener {
