@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.OpenableColumns
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -44,6 +45,7 @@ class EditTaskActivity : AppCompatActivity() {
         dbManager = DbManager(this)
 
         val taskId = intent.getIntExtra("TASK_ID", -1)
+        Log.d("Task IDDDDD: ", taskId.toString())
         val task = dbManager!!.getTask(taskId)
 
         binding.titleEditText.setText(task.title)
@@ -57,8 +59,7 @@ class EditTaskActivity : AppCompatActivity() {
         } else binding.attachmentImageView.tag = ""
         var notifications = task.notifications
 
-        binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            notifications = if (isChecked){
+        binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked -> notifications = if (isChecked){
                 showToast(ToastMessages.NOTIFICATIONS_ON)
                 1
             } else {

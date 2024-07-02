@@ -12,17 +12,22 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.Reminder
+import com.example.todolist.management.NotificationManager
 import com.example.todolist.adapters.CategoryAdapter
 import com.example.todolist.adapters.TaskAdapter
 import com.example.todolist.databinding.ActivityMainBinding
 import com.example.todolist.interfaces.OnCategoryClickListener
 import com.example.todolist.interfaces.OnTaskClickListener
+import com.example.todolist.interfaces.TaskStatusListener
 import com.example.todolist.management.DbManager
 import com.example.todolist.model.CategoryModel
 import com.example.todolist.model.TaskModel
 
-class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickListener {
+class MainActivity : AppCompatActivity(),
+    OnTaskClickListener,
+    OnCategoryClickListener,
+    TaskStatusListener
+{
     private lateinit var binding: ActivityMainBinding
     private var tasksList = ArrayList<TaskModel>()
     private var categoriesList = ArrayList<CategoryModel>()
@@ -48,9 +53,9 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickLi
         getAllItemsForLists()
         fetchLists()
 
-        val reminder = Reminder(applicationContext)
-        if(!reminder.getIsRunning()){
-            reminder.run()
+        val notificationManager = NotificationManager(applicationContext, this)
+        if(!notificationManager.getIsRunning()){
+            notificationManager.run()
         }
 
         binding.addTaskButton.setOnClickListener {
@@ -63,8 +68,10 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickLi
             startActivity(intent)
         }
 
-        var sortType = ascSortOrder
+        var sortType = descSortOrder
         binding.sortButton.setOnClickListener {
+            binding.sortButton.rotation = if (binding.sortButton.rotation == 0F) 180F else 0F
+
             val categoryName = if(onCategoryClick){
                 categoriesList[0].name
             } else ""
@@ -143,5 +150,11 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener, OnCategoryClickLi
     private fun fetchLists() {
         fetchTasksList()
         fetchCategoriesList()
+    }
+
+    override fun onTaskStatusChanged() {
+        runOnUiThread {
+            fetchTasksList()
+        }
     }
 }

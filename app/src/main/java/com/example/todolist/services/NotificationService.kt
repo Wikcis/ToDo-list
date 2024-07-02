@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.todolist.R
 import com.example.todolist.activities.EditTaskActivity
@@ -13,7 +14,6 @@ class NotificationService(private val context: Context) {
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     private val minutes = prefs.getString("minutes", "1 min")
-    private var notificationCounter = 1
     companion object{
         const val CHANNEL_ID = "notification_channel"
         const val CHANNEL_NAME = "ToDo List"
@@ -24,7 +24,7 @@ class NotificationService(private val context: Context) {
         intent.putExtra("TASK_ID", task.id)
         val activityPendingIntent = PendingIntent.getActivity(
             context,
-            1,
+            0,
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
@@ -39,7 +39,6 @@ class NotificationService(private val context: Context) {
                     activityPendingIntent
                 )
                 .build()
-
-        notificationManager.notify(notificationCounter++, notification)
+        notificationManager.notify(task.id, notification)
     }
 }

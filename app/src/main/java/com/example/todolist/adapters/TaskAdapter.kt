@@ -57,7 +57,6 @@ class TaskAdapter(
             notifyItemRangeChanged(position, tasksList.size)
             true
         }
-
     }
 
     override fun getItemCount(): Int {

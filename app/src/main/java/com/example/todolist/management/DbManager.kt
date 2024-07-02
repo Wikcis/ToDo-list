@@ -101,8 +101,8 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
 
     fun getTaskWithTitle(title: String): TaskModel? {
         val titleToQuery = "\"$title\""
-        val queryHideTasks = makeHideTasksQuery(false)
-        val tasks = getTasks("SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE = $titleToQuery LIMIT 1 $queryHideTasks", null)
+        val queryHideTasks = makeHideTasksQuery(true)
+        val tasks = getTasks("SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE = $titleToQuery $queryHideTasks LIMIT 1", null)
         return if(tasks.isEmpty()){
             null
         } else
