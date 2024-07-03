@@ -22,19 +22,21 @@ class NotificationManager(private val context: Context, private val listener: Ta
             while (isRunning) {
                 val tasksList = dbManager!!.getTasksCloseToEndDate()
 
-                tasksList.forEach {
-                    task -> NotificationService(context).showNotification(task)
-                    val tempTask = TaskModel(
-                        task.id,
-                        task.title,
-                        task.description,
-                        task.category,
-                        task.creationDate,
-                        task.endDate,
-                        task.attachment,
-                        0
-                    )
-                    dbManager!!.updateTask(tempTask)
+                tasksList.forEach { task ->
+                    if(task.notifications == 1){
+                        NotificationService(context).showNotification(task)
+                        val tempTask = TaskModel(
+                            task.id,
+                            task.title,
+                            task.description,
+                            task.category,
+                            task.creationDate,
+                            task.endDate,
+                            task.attachment,
+                            0
+                        )
+                        dbManager!!.updateTask(tempTask)
+                    }
                     val taskStatusChanger = TaskStatusChanger(task, listener)
                     Thread(taskStatusChanger).start()
                     delay(2000)

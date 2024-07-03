@@ -127,7 +127,6 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
             "SELECT * FROM $TABLE_NAME " +
                     "WHERE $TASK_END_DATE BETWEEN \"$localDate\" " +
                     "AND \"$updatedLocalDate\" " +
-                    "AND $TASK_NOTIFICATIONS = 1 " +
                     queryHideTasks,
             null)
     }

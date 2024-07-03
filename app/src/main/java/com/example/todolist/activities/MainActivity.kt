@@ -23,9 +23,6 @@ import com.example.todolist.managers.NotificationManager
 import com.example.todolist.model.CategoryModel
 import com.example.todolist.model.TaskModel
 
-/*TODO:
-    ogarnąć zeby aski którye nie mają powiadomien tez zmieniały sie na zrobione
- */
 class MainActivity : AppCompatActivity(),
     OnTaskClickListener,
     OnCategoryClickListener,
