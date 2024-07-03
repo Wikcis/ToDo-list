@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        app:cardBackgroundColor="@color/main"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/endDateTextView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:autoSizeMaxTextSize="20sp"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeTextType="uniform"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="End of task"
+                app:layout_constraintBottom_toBottomOf="@id/endDateHelper"
+                app:layout_constraintEnd_toStartOf="@+id/optionsHelper"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:autoSizeMinTextSize="20sp"
+                android:autoSizeMaxTextSize="36sp"
+                android:autoSizeTextType="uniform"
+                android:layout_marginStart="10dp"
+                android:textStyle="bold"
+                android:text="Title"
+                android:gravity="start"
+                app:layout_constraintTop_toBottomOf="@id/endDateHelper"
+                app:layout_constraintBottom_toTopOf="@id/descriptionTextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/categoryTextView"/>
+
+            <TextView
+                android:id="@+id/categoryTextView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:autoSizeMinTextSize="20sp"
+                android:autoSizeMaxTextSize="28sp"
+                android:autoSizeTextType="uniform"
+                android:text="Category"
+                android:gravity="start"
+                app:layout_constraintTop_toBottomOf="@id/endDateHelper"
+                app:layout_constraintBottom_toTopOf="@id/descriptionTextView"
+                app:layout_constraintStart_toEndOf="@id/titleTextView"
+                app:layout_constraintEnd_toEndOf="@id/optionsHelper"/>
+
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:autoSizeMinTextSize="20sp"
+                android:autoSizeMaxTextSize="25sp"
+                android:autoSizeTextType="uniform"
+                android:layout_marginStart="10dp"
+                android:text="Description"
+                android:gravity="start"
+                app:layout_constraintTop_toBottomOf="@id/titleTextView"
+                app:layout_constraintBottom_toTopOf="@id/creationDateTextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/optionsHelper"/>
+
+            <TextView
+                android:id="@+id/creationDateTextView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="20sp"
+                android:autoSizeTextType="uniform"
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
+                android:text="Creation date"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/optionsHelper"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/creationDateHelper" />
+
+            <ImageView
+                android:id="@+id/statusImageView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/x"
+                android:padding="10dp"
+                app:layout_constraintBottom_toTopOf="@id/imageHelper"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/optionsHelper"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/bellImageView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="10dp"
+                android:src="@drawable/bell_slash"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/optionsHelper"
+                app:layout_constraintTop_toTopOf="@+id/imageHelper" />
+
+            <ImageView
+                android:id="@+id/attachmentImageView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/endDateHelper"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/middleHelper" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middleHelper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.25"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/creationDateHelper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.8"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/imageHelper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.50"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/optionsHelper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.9"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/endDateHelper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.22"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

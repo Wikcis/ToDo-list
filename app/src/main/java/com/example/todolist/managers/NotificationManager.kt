@@ -1,7 +1,6 @@
-package com.example.todolist.management
+package com.example.todolist.managers
 
 import android.content.Context
-import android.util.Log
 import com.example.todolist.interfaces.TaskStatusListener
 import com.example.todolist.model.TaskModel
 import com.example.todolist.services.NotificationService

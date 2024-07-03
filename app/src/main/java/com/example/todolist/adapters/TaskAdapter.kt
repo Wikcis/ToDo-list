@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.interfaces.OnTaskClickListener
-import com.example.todolist.management.TimeManager
+import com.example.todolist.managers.TimeManager
 import com.example.todolist.model.TaskModel
 
 class TaskAdapter(

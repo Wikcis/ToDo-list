@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.EditTaskActivity">
+
+    <EditText
+        android:id="@+id/titleEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:autoSizeMaxTextSize="30sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="start|bottom"
+        android:hint="Title"
+        app:layout_constraintBottom_toBottomOf="@id/titleHelper"
+        app:layout_constraintEnd_toStartOf="@id/descriptionEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:autoSizeMaxTextSize="25sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="start|top"
+        android:hint="Description"
+        app:layout_constraintBottom_toTopOf="@+id/descriptionHelper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/titleEditText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/endDateEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:autoSizeMaxTextSize="25sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="start|bottom"
+        android:hint="End Date"
+        app:layout_constraintBottom_toBottomOf="@id/endDateHelper"
+        app:layout_constraintEnd_toStartOf="@+id/descriptionEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/categoryEditText" />
+
+    <TextView
+        android:id="@+id/notificationTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:autoSizeMaxTextSize="23dp"
+        android:autoSizeMinTextSize="16dp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="Notifications Off/On"
+        app:layout_constraintBottom_toTopOf="@+id/bottomHelper"
+        app:layout_constraintEnd_toStartOf="@id/notificationSwitch"
+        app:layout_constraintHorizontal_weight="5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/endDateEditText" />
+
+    <Switch
+        android:id="@+id/notificationSwitch"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toEndOf="@id/notificationTextView"
+        app:layout_constraintTop_toTopOf="@+id/endDateHelper"
+        app:layout_constraintBottom_toTopOf="@+id/bottomHelper"
+        app:layout_constraintEnd_toStartOf="@id/removeAttachmentButton"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <EditText
+        android:id="@+id/categoryEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:autoSizeMaxTextSize="25sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="start|bottom"
+        android:hint="Category"
+        app:layout_constraintBottom_toBottomOf="@id/descriptionHelper"
+        app:layout_constraintEnd_toStartOf="@id/descriptionEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/titleHelper" />
+
+    <Button
+        android:id="@+id/attachmentButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/add"
+        app:layout_constraintBottom_toTopOf="@+id/endDateHelper"
+        app:layout_constraintEnd_toStartOf="@+id/middleHelper"
+        app:layout_constraintStart_toEndOf="@+id/endDateEditText"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
+
+    <Button
+        android:id="@+id/removeAttachmentButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/remove"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomHelper"
+        app:layout_constraintEnd_toStartOf="@id/attachmentImageView"
+        app:layout_constraintStart_toEndOf="@id/endDateEditText"
+        app:layout_constraintTop_toBottomOf="@+id/attachmentButton" />
+
+    <ImageView
+        android:id="@+id/attachmentImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomHelper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/attachmentButton"
+        app:layout_constraintTop_toBottomOf="@id/descriptionEditText" />
+
+    <Button
+        android:id="@+id/saveTaskButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:autoSizeMaxTextSize="30dp"
+        android:autoSizeMinTextSize="16dp"
+        android:autoSizeTextType="uniform"
+        android:backgroundTint="@color/main"
+        android:textColor="@color/black"
+        android:text="Save task"
+        app:layout_constraintTop_toBottomOf="@id/bottomHelper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/titleHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.21" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/descriptionHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endDateHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/middleHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.64" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.80" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

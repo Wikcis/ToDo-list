@@ -1,9 +1,8 @@
-package com.example.todolist.management
+package com.example.todolist.managers
 
 import com.example.todolist.objects.ToastMessages
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 class TimeManager {
     private val pattern = "HH:mm:ss yyyy-MM-dd"

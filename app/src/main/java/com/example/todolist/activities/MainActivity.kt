@@ -12,17 +12,20 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.management.NotificationManager
 import com.example.todolist.adapters.CategoryAdapter
 import com.example.todolist.adapters.TaskAdapter
 import com.example.todolist.databinding.ActivityMainBinding
 import com.example.todolist.interfaces.OnCategoryClickListener
 import com.example.todolist.interfaces.OnTaskClickListener
 import com.example.todolist.interfaces.TaskStatusListener
-import com.example.todolist.management.DbManager
+import com.example.todolist.managers.DbManager
+import com.example.todolist.managers.NotificationManager
 import com.example.todolist.model.CategoryModel
 import com.example.todolist.model.TaskModel
 
+/*TODO:
+    ogarnąć zeby aski którye nie mają powiadomien tez zmieniały sie na zrobione
+ */
 class MainActivity : AppCompatActivity(),
     OnTaskClickListener,
     OnCategoryClickListener,

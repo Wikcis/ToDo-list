@@ -1,4 +1,4 @@
-package com.example.todolist.management
+package com.example.todolist.managers
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -7,7 +7,6 @@ import android.content.SharedPreferences
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
 import com.example.todolist.model.CategoryModel
 import com.example.todolist.model.TaskModel
 import java.time.LocalDateTime
@@ -101,7 +100,7 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
 
     fun getTaskWithTitle(title: String): TaskModel? {
         val titleToQuery = "\"$title\""
-        val queryHideTasks = makeHideTasksQuery(true)
+        val queryHideTasks = makeHideTasksQuery(false)
         val tasks = getTasks("SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE = $titleToQuery $queryHideTasks LIMIT 1", null)
         return if(tasks.isEmpty()){
             null
