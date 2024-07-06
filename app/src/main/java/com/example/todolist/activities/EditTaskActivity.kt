@@ -3,7 +3,7 @@ package com.example.todolist.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -13,8 +13,8 @@ import com.example.todolist.databinding.ActivityEditTaskBinding
 import com.example.todolist.managers.DbManager
 import com.example.todolist.managers.ImageManager
 import com.example.todolist.managers.TimeManager
+import com.example.todolist.managers.ToastManager
 import com.example.todolist.model.TaskModel
-import com.example.todolist.objects.ToastMessages
 
 class EditTaskActivity : AppCompatActivity() {
 
@@ -45,34 +45,37 @@ class EditTaskActivity : AppCompatActivity() {
         binding.notificationSwitch.isChecked = task.notifications == 1
 
         if (task.attachment.isNotEmpty()) {
-            val file = ImageManager(applicationContext).getImageFileFromDCIM(task.attachment)
+            val file = ImageManager(applicationContext).getImageFileFromDocuments(task.attachment)
 
             ImageManager(applicationContext).glideImage(file, binding.attachmentImageView)
+            binding.attachmentImageView.tag = task.attachment
         } else binding.attachmentImageView.tag = ""
         var notifications = task.notifications
 
         binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
             notifications = if (isChecked){
-                showToast(ToastMessages.NOTIFICATIONS_ON)
+                ToastManager(applicationContext).showToast(ToastManager.NOTIFICATIONS_ON)
                 1
             } else {
-                showToast(ToastMessages.NOTIFICATIONS_OFF)
+                ToastManager(applicationContext).showToast(ToastManager.NOTIFICATIONS_OFF)
                 0
             }
         }
 
         binding.saveTaskButton.setOnClickListener {
             if(ifTaskIsTheSame(task, notifications)){
-                showToast(ToastMessages.TASK_NOT_CHANGED)
+                ToastManager(applicationContext).showToast(ToastManager.TASK_NOT_CHANGED)
+
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             }else {
-                if (binding.titleEditText.text.isBlank()) showToast(ToastMessages.NO_TITLE)
+                if (binding.titleEditText.text.isBlank()) ToastManager(applicationContext).showToast(ToastManager.NO_TITLE)
+
 
                 val toastMessage =
                     TimeManager().validateDate(binding.endDateEditText.text.toString())
 
-                if (toastMessage == ToastMessages.SUCCESS) {
+                if (toastMessage == ToastManager.SUCCESS) {
                     val title = binding.titleEditText.text.toString()
                     val description = binding.descriptionEditText.text.toString()
                     val category = binding.categoryEditText.text.toString()
@@ -96,7 +99,7 @@ class EditTaskActivity : AppCompatActivity() {
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                 } else
-                    showToast(toastMessage)
+                    ToastManager(applicationContext).showToast(toastMessage)
             }
         }
 
@@ -106,6 +109,11 @@ class EditTaskActivity : AppCompatActivity() {
 
         binding.removeAttachmentButton.setOnClickListener {
             clearAttachment()
+        }
+
+        binding.attachmentImageView.setOnClickListener {
+            if(task.attachment.isNotEmpty()) ImageManager(applicationContext).openFile(it.tag.toString())
+            else ToastManager(applicationContext).showToast(ToastManager.NO_FILE)
         }
     }
 
@@ -138,9 +146,5 @@ class EditTaskActivity : AppCompatActivity() {
                 ImageManager(applicationContext).handleFileUri(uri, binding.attachmentImageView)
             }
         }
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

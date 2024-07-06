@@ -1,6 +1,5 @@
 package com.example.todolist.managers
 
-import com.example.todolist.objects.ToastMessages
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -24,18 +23,18 @@ class TimeManager {
 
     fun validateDate(date: String): String {
         return when {
-            date.isEmpty() -> ToastMessages.SPECIFY_DATE
+            date.isEmpty() -> ToastManager.SPECIFY_DATE
             else -> try {
                 val parsedDate = LocalDateTime.parse(date, formatter)
                 when {
                     !formatter.format(parsedDate)
-                        .equals(date) -> ToastMessages.INCORRECT_EXECUTION_DATE
+                        .equals(date) -> ToastManager.INCORRECT_EXECUTION_DATE
 
-                    parsedDate.isBefore(LocalDateTime.now()) -> ToastMessages.PAST_EXECUTION_DATE
-                    else -> ToastMessages.SUCCESS
+                    parsedDate.isBefore(LocalDateTime.now()) -> ToastManager.PAST_EXECUTION_DATE
+                    else -> ToastManager.SUCCESS
                 }
             } catch (e: Exception) {
-                ToastMessages.INCORRECT_EXECUTION_DATE
+                ToastManager.INCORRECT_EXECUTION_DATE
             }
         }
     }
