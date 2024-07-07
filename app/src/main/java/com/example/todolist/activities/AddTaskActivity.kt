@@ -3,6 +3,7 @@ package com.example.todolist.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,6 +15,7 @@ import com.example.todolist.managers.ImageManager
 import com.example.todolist.managers.TimeManager
 import com.example.todolist.managers.ToastManager
 import com.example.todolist.model.TaskModel
+import com.example.todolist.services.NotificationService
 
 class AddTaskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddTaskBinding
@@ -71,6 +73,9 @@ class AddTaskActivity : AppCompatActivity() {
                     )
 
                     dbManager!!.insertTask(task)
+
+                    val tmp = dbManager!!.getLastAddedTask()
+                    NotificationService().scheduleNotification(applicationContext, tmp)
 
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)

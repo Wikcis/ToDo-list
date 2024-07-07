@@ -98,6 +98,12 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         return tasks[0]
     }
 
+    fun getLastAddedTask(): TaskModel{
+        val tasks = getTasks("SELECT * FROM $TABLE_NAME ORDER BY $TASK_ID DESC", null)
+        return tasks[0]
+    }
+
+
     fun getTaskWithTitle(title: String): TaskModel? {
         val titleToQuery = "\"$title\""
         val queryHideTasks = makeHideTasksQuery(false)
@@ -116,19 +122,6 @@ class DbManager(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
     fun getAllTasksWithTitle(searchTitle: String): ArrayList<TaskModel>{
         val queryHideTasks = makeHideTasksQuery(false)
         return getTasks("SELECT * FROM $TABLE_NAME WHERE $TASK_TITLE LIKE ? COLLATE NOCASE $queryHideTasks", arrayOf("$searchTitle%"))
-    }
-
-    fun getTasksCloseToEndDate(): ArrayList<TaskModel>{
-        val queryHideTasks = makeHideTasksQuery(false)
-        val localDate = TimeManager().formatDate(LocalDateTime.now())
-        val minutesString = minutes?.filter { it.isDigit() }
-        val updatedLocalDate = TimeManager().updateTime(localDate, minutesString!!.toLong())
-        return getTasks(
-            "SELECT * FROM $TABLE_NAME " +
-                    "WHERE $TASK_END_DATE BETWEEN \"$localDate\" " +
-                    "AND \"$updatedLocalDate\" " +
-                    queryHideTasks,
-            null)
     }
 
     fun getAllTasksWithCategory(category: String): ArrayList<TaskModel>{

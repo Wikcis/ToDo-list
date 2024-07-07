@@ -36,6 +36,7 @@ class EditTaskActivity : AppCompatActivity() {
         dbManager = DbManager(this)
 
         val taskId = intent.getIntExtra("TASK_ID", -1)
+
         val task = dbManager!!.getTask(taskId)
 
         binding.titleEditText.setText(task.title)

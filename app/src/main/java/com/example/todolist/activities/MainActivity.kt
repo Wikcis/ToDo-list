@@ -17,17 +17,13 @@ import com.example.todolist.adapters.TaskAdapter
 import com.example.todolist.databinding.ActivityMainBinding
 import com.example.todolist.interfaces.OnCategoryClickListener
 import com.example.todolist.interfaces.OnTaskClickListener
-import com.example.todolist.interfaces.TaskStatusListener
 import com.example.todolist.managers.DbManager
-import com.example.todolist.managers.NotificationManager
 import com.example.todolist.model.CategoryModel
 import com.example.todolist.model.TaskModel
 
 class MainActivity : AppCompatActivity(),
     OnTaskClickListener,
-    OnCategoryClickListener,
-    TaskStatusListener
-{
+    OnCategoryClickListener {
     private lateinit var binding: ActivityMainBinding
     private var tasksList = ArrayList<TaskModel>()
     private var categoriesList = ArrayList<CategoryModel>()
@@ -52,11 +48,6 @@ class MainActivity : AppCompatActivity(),
 
         getAllItemsForLists()
         fetchLists()
-
-        val notificationManager = NotificationManager(applicationContext, this)
-        if(!notificationManager.getIsRunning()){
-            notificationManager.run()
-        }
 
         binding.addTaskButton.setOnClickListener {
             val intent = Intent(applicationContext, AddTaskActivity::class.java)
@@ -150,11 +141,5 @@ class MainActivity : AppCompatActivity(),
     private fun fetchLists() {
         fetchTasksList()
         fetchCategoriesList()
-    }
-
-    override fun onTaskStatusChanged() {
-        runOnUiThread {
-            fetchTasksList()
-        }
     }
 }

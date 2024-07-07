@@ -1,5 +1,6 @@
 package com.example.todolist.managers
 
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -15,11 +16,20 @@ class TimeManager {
         return formatter.format(date)
     }
 
-    fun updateTime(date: String, minutes: Long): String{
+    private fun updateTime(date: String, minutes: Long): String{
         val dateTime = LocalDateTime.parse(date, formatter)
-        val updatedDateTime = dateTime.plusMinutes(minutes)
+        val updatedDateTime = dateTime.minusMinutes(minutes)
         return formatDate(updatedDateTime)
     }
+
+    fun getDurationBetweenDates(minutes: String?, taskEndDate: String): Duration? {
+        val currDate = LocalDateTime.parse(TimeManager().getCurrentDate(), formatter)
+        val minutesString = minutes?.filter { it.isDigit() }
+        val updatedDate = TimeManager().updateTime(taskEndDate, minutesString!!.toLong())
+        val endDate = LocalDateTime.parse(updatedDate, formatter)
+        return Duration.between(currDate, endDate)
+    }
+
 
     fun validateDate(date: String): String {
         return when {
